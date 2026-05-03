@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/femfit-app/static/css/main.bb48b78d.css",
+    "main.js": "/femfit-app/static/js/main.009dcd78.js",
+    "static/js/453.08deebb4.chunk.js": "/femfit-app/static/js/453.08deebb4.chunk.js",
+    "index.html": "/femfit-app/index.html",
+    "main.bb48b78d.css.map": "/femfit-app/static/css/main.bb48b78d.css.map",
+    "main.009dcd78.js.map": "/femfit-app/static/js/main.009dcd78.js.map",
+    "453.08deebb4.chunk.js.map": "/femfit-app/static/js/453.08deebb4.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.bb48b78d.css",
+    "static/js/main.009dcd78.js"
+  ]
+}
