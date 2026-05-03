@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, BookOpen } from 'lucide-react';
 
 interface Post {
   id: string;
@@ -8,6 +8,7 @@ interface Post {
   date: string;
   excerpt: string;
   body: string;
+  tag: string;
 }
 
 interface Comment {
@@ -20,9 +21,10 @@ interface Comment {
 const POSTS: Post[] = [
   {
     id: 'pcos',
+    tag: 'Health',
     title: 'Understanding PCOS: What Every Woman Should Know',
     author: 'Dr. Maya Chen',
-    date: '2026-04-10',
+    date: 'Apr 10, 2026',
     excerpt: 'Polycystic ovary syndrome affects 1 in 10 women of reproductive age. Here\'s a clear breakdown of symptoms, causes, and management strategies.',
     body: `Polycystic ovary syndrome (PCOS) is one of the most common hormonal disorders, affecting up to 10% of women during their reproductive years. Despite its prevalence, it's often misunderstood or misdiagnosed.
 
@@ -46,9 +48,10 @@ Talk to your doctor about medical options like metformin or hormonal contracepti
   },
   {
     id: 'cycle-syncing',
+    tag: 'Training',
     title: 'Cycle Syncing: The Science of Training with Your Hormones',
     author: 'Sarah Williams, CSCS',
-    date: '2026-04-18',
+    date: 'Apr 18, 2026',
     excerpt: 'Your hormones shift dramatically across your menstrual cycle — and your workouts should too. Here\'s how to optimize your training for each phase.',
     body: `Cycle syncing is the practice of aligning your diet, exercise, and lifestyle to the four phases of the menstrual cycle. Pioneered by functional nutritionist Alissa Vitti, this approach works with your hormonal fluctuations instead of against them.
 
@@ -74,14 +77,15 @@ Progesterone rises while estrogen dips slightly. Endurance improves but raw powe
   },
   {
     id: 'nutrition-myths',
+    tag: 'Nutrition',
     title: '5 Nutrition Myths That Are Holding Women Back',
     author: 'Dr. Priya Kapoor, RD',
-    date: '2026-04-25',
+    date: 'Apr 25, 2026',
     excerpt: 'From "carbs are the enemy" to "eat less, move more" — these widespread nutrition myths do real harm to women\'s health and fitness progress.',
     body: `Nutrition advice is everywhere, and unfortunately much of it is wrong — especially for women. Here are five persistent myths and what the science actually says.
 
 **Myth 1: Carbs are the enemy**
-Carbohydrates are your body's preferred fuel source, especially for the brain and during exercise. The issue is *type* and *quantity*, not carbs themselves. Complex carbs (oats, sweet potato, brown rice) are anti-inflammatory and support hormonal balance. Cutting carbs excessively disrupts cortisol and thyroid function.
+Carbohydrates are your body's preferred fuel source, especially for the brain and during exercise. The issue is type and quantity, not carbs themselves. Complex carbs (oats, sweet potato, brown rice) are anti-inflammatory and support hormonal balance. Cutting carbs excessively disrupts cortisol and thyroid function.
 
 **Myth 2: Eating fat makes you fat**
 Healthy fats (avocado, olive oil, nuts, fatty fish) are essential for producing estrogen, progesterone, and testosterone. Low-fat diets have been linked to hormonal disruption and fertility issues. Fat does not cause fat storage — excess total calories do.
@@ -97,9 +101,10 @@ A 500-calorie donut and a 500-calorie meal of salmon, vegetables, and quinoa cre
   },
   {
     id: 'workout-phases',
+    tag: 'Training',
     title: 'The Best Workouts for Each Phase of Your Cycle',
     author: 'Emma Rodriguez, PT',
-    date: '2026-05-02',
+    date: 'May 2, 2026',
     excerpt: 'A practical guide to matching your workouts to your hormones — with specific exercise recommendations for every phase.',
     body: `Your body's performance capacity genuinely changes across the menstrual cycle. Here's a practical guide to making the most of each phase.
 
@@ -129,9 +134,10 @@ Progesterone supports endurance. Many women perform best at longer, moderate-eff
   },
   {
     id: 'mental-health',
+    tag: 'Wellness',
     title: 'The Cycle-Mental Health Connection: What You Need to Know',
     author: 'Dr. Laila Hassan, Psychiatrist',
-    date: '2026-05-09',
+    date: 'May 9, 2026',
     excerpt: 'Hormonal fluctuations across the menstrual cycle significantly impact mood, anxiety, and cognitive function. Here\'s how to navigate them.',
     body: `The relationship between the menstrual cycle and mental health is profound — yet it's rarely discussed openly. Understanding this connection can transform how you relate to your emotions and seek support.
 
@@ -153,9 +159,10 @@ Regular aerobic exercise is one of the most evidence-based interventions for cyc
   },
   {
     id: 'hormones',
+    tag: 'Science',
     title: 'The Four Key Hormones of Your Cycle — Explained Simply',
     author: 'Dr. Nina Park, Endocrinologist',
-    date: '2026-05-15',
+    date: 'May 15, 2026',
     excerpt: 'Estrogen, progesterone, FSH, and LH drive your entire menstrual cycle. Here\'s what each one does and why it matters for your health.',
     body: `The menstrual cycle is orchestrated by four main hormones. Understanding them gives you a clear picture of what's happening in your body each month.
 
@@ -186,6 +193,14 @@ Produced by the corpus luteum (the shell of the released follicle), progesterone
 - Always consult a healthcare provider for hormone testing and interpretation.`,
   },
 ];
+
+const TAG_COLORS: Record<string, string> = {
+  Health: 'bg-peach/20 text-peach',
+  Training: 'bg-sage/20 text-sage',
+  Nutrition: 'bg-yellow/50 text-charcoal',
+  Wellness: 'bg-orange/20 text-orange',
+  Science: 'bg-blue-100 text-blue-600',
+};
 
 const Blog: React.FC = () => {
   const [expandedPost, setExpandedPost] = useState<string | null>(null);
@@ -222,107 +237,136 @@ const Blog: React.FC = () => {
     setCommentInputs({ ...commentInputs, [postId]: '' });
   };
 
+  const renderBody = (body: string) =>
+    body.split('\n\n').map((para, i) => {
+      if (para.startsWith('**') && para.endsWith('**')) {
+        return <h3 key={i} className="font-bold text-charcoal text-sm mt-4 mb-1.5">{para.replace(/\*\*/g, '')}</h3>;
+      }
+      if (para.startsWith('*') && para.endsWith('*')) {
+        return <p key={i} className="font-semibold text-sage text-sm mt-3 mb-0.5">{para.replace(/\*/g, '')}</p>;
+      }
+      if (para.startsWith('- ') || para.includes('\n- ')) {
+        return (
+          <ul key={i} className="list-disc list-inside text-sm text-gray-600 space-y-1 my-2 pl-1">
+            {para.split('\n').map((line, j) => (
+              <li key={j}>{line.replace(/^- /, '')}</li>
+            ))}
+          </ul>
+        );
+      }
+      return <p key={i} className="text-sm text-gray-600 my-2 leading-relaxed">{para}</p>;
+    });
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-femfit-sand to-femfit-linen py-8">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-bold text-charcoal mb-2">Wellness Blog</h1>
-        <p className="text-gray-500 text-sm mb-6">Science-backed articles on women's health, hormones, and fitness</p>
+    <div className="min-h-screen bg-gradient-to-b from-femfit-sand to-femfit-linen">
 
-        <div className="space-y-5">
-          {POSTS.map(post => {
-            const open = expandedPost === post.id;
-            const postComments = comments[post.id] || [];
-            return (
-              <div key={post.id} className="bg-white rounded-xl shadow overflow-hidden">
-                {/* Header */}
-                <button
-                  className="w-full text-left p-6 focus:outline-none"
-                  onClick={() => setExpandedPost(open ? null : post.id)}
-                >
-                  <div className="flex justify-between items-start gap-4">
-                    <div className="flex-1">
-                      <h2 className="text-base font-bold text-charcoal mb-1">{post.title}</h2>
-                      <p className="text-xs text-gray-400 mb-2">{post.author} · {post.date}</p>
-                      <p className="text-sm text-gray-600">{post.excerpt}</p>
-                    </div>
-                    <div className="flex-shrink-0 mt-1">
-                      {open ? <ChevronUp size={20} className="text-sage" /> : <ChevronDown size={20} className="text-gray-400" />}
-                    </div>
-                  </div>
-                </button>
-
-                {/* Expanded body */}
-                {open && (
-                  <div className="px-6 pb-6">
-                    <div className="border-t border-sage/20 pt-4 mb-6">
-                      {post.body.split('\n\n').map((para, i) => {
-                        if (para.startsWith('**') && para.endsWith('**')) {
-                          return <h3 key={i} className="font-bold text-charcoal mt-4 mb-1">{para.replace(/\*\*/g, '')}</h3>;
-                        }
-                        if (para.startsWith('*') && para.endsWith('*')) {
-                          return <p key={i} className="font-semibold text-sage text-sm mt-3 mb-0.5">{para.replace(/\*/g, '')}</p>;
-                        }
-                        if (para.startsWith('- ') || para.includes('\n- ')) {
-                          return (
-                            <ul key={i} className="list-disc list-inside text-sm text-gray-600 space-y-0.5 my-2">
-                              {para.split('\n').map((line, j) => (
-                                <li key={j}>{line.replace(/^- /, '')}</li>
-                              ))}
-                            </ul>
-                          );
-                        }
-                        return <p key={i} className="text-sm text-gray-600 my-2 leading-relaxed">{para}</p>;
-                      })}
-                    </div>
-
-                    {/* Comments */}
-                    <div className="border-t border-sage/20 pt-4">
-                      <h3 className="text-sm font-bold text-charcoal mb-3">
-                        Comments ({postComments.length})
-                      </h3>
-
-                      {postComments.map((c, i) => (
-                        <div key={i} className="mb-3 p-3 bg-gray-50 rounded-lg">
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="text-xs font-bold text-charcoal">{c.author}</span>
-                            <span className="text-xs text-gray-400">{c.timestamp}</span>
-                          </div>
-                          <p className="text-sm text-gray-600">{c.text}</p>
-                        </div>
-                      ))}
-
-                      <div className="flex gap-2 mt-3">
-                        <input
-                          type="text"
-                          value={commentInputs[post.id] || ''}
-                          onChange={e => setCommentInputs({ ...commentInputs, [post.id]: e.target.value })}
-                          onKeyDown={e => e.key === 'Enter' && handleComment(post.id)}
-                          placeholder={`Comment as ${isAnonymous ? 'Anonymous Member' : 'yourself'}…`}
-                          className="flex-1 border border-sage/30 rounded-lg px-3 py-2 text-sm focus:border-sage outline-none"
-                        />
-                        <button
-                          onClick={() => handleComment(post.id)}
-                          className="bg-sage text-white px-4 py-2 rounded-lg font-bold text-sm hover:opacity-90"
-                        >
-                          Post
-                        </button>
-                      </div>
-                      <label className="flex items-center gap-2 mt-2 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={isAnonymous}
-                          onChange={e => setIsAnonymous(e.target.checked)}
-                          className="rounded"
-                        />
-                        <span className="text-xs text-gray-500">Post anonymously</span>
-                      </label>
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
+      {/* Header */}
+      <div className="bg-sage px-4 pt-5 pb-5 sm:px-6">
+        <div className="max-w-3xl mx-auto flex items-center gap-3">
+          <BookOpen size={22} className="text-white/80" />
+          <div>
+            <h1 className="text-2xl font-bold text-white">Wellness Blog</h1>
+            <p className="text-white/70 text-xs">Science-backed articles on women's health</p>
+          </div>
         </div>
+      </div>
+
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-5 space-y-3">
+        {POSTS.map(post => {
+          const open = expandedPost === post.id;
+          const postComments = comments[post.id] || [];
+          return (
+            <div key={post.id} className="bg-white rounded-2xl shadow-sm border border-sage/10 overflow-hidden">
+
+              {/* Post header — tap to expand */}
+              <button
+                className="w-full text-left px-5 py-4 focus:outline-none active:bg-gray-50 transition"
+                onClick={() => setExpandedPost(open ? null : post.id)}
+              >
+                <div className="flex justify-between items-start gap-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${TAG_COLORS[post.tag] || 'bg-gray-100 text-gray-500'}`}>
+                        {post.tag}
+                      </span>
+                      <span className="text-[10px] text-gray-400">{post.date}</span>
+                    </div>
+                    <h2 className="text-sm font-bold text-charcoal mb-1 leading-snug">{post.title}</h2>
+                    <p className="text-xs text-gray-400 mb-1.5">{post.author}</p>
+                    {!open && <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">{post.excerpt}</p>}
+                    {postComments.length > 0 && !open && (
+                      <p className="text-[10px] text-sage mt-1.5 font-medium">{postComments.length} comment{postComments.length !== 1 ? 's' : ''}</p>
+                    )}
+                  </div>
+                  <div className="flex-shrink-0 mt-0.5">
+                    {open
+                      ? <ChevronUp size={18} className="text-sage" />
+                      : <ChevronDown size={18} className="text-gray-300" />
+                    }
+                  </div>
+                </div>
+              </button>
+
+              {/* Expanded content */}
+              {open && (
+                <div className="px-5 pb-5">
+                  <div className="border-t border-sage/10 pt-4 mb-5">
+                    {renderBody(post.body)}
+                  </div>
+
+                  {/* Comments */}
+                  <div className="border-t border-sage/10 pt-4">
+                    <h3 className="text-sm font-bold text-charcoal mb-3">
+                      Comments {postComments.length > 0 && <span className="text-gray-400 font-normal">({postComments.length})</span>}
+                    </h3>
+
+                    {postComments.length === 0 && (
+                      <p className="text-xs text-gray-400 italic mb-3">Be the first to comment</p>
+                    )}
+
+                    {postComments.map((c, i) => (
+                      <div key={i} className="mb-3 p-3 bg-gray-50 rounded-xl">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-xs font-bold text-charcoal">{c.author}</span>
+                          <span className="text-[10px] text-gray-400">{c.timestamp}</span>
+                        </div>
+                        <p className="text-sm text-gray-600">{c.text}</p>
+                      </div>
+                    ))}
+
+                    <div className="flex gap-2 mt-2">
+                      <input
+                        type="text"
+                        value={commentInputs[post.id] || ''}
+                        onChange={e => setCommentInputs({ ...commentInputs, [post.id]: e.target.value })}
+                        onKeyDown={e => e.key === 'Enter' && handleComment(post.id)}
+                        placeholder={`Comment as ${isAnonymous ? 'Anonymous Member' : 'yourself'}…`}
+                        className="flex-1 border border-sage/30 rounded-xl px-3 py-2.5 text-sm focus:border-sage outline-none"
+                      />
+                      <button
+                        onClick={() => handleComment(post.id)}
+                        className="bg-sage text-white px-4 py-2.5 rounded-xl font-bold text-sm hover:opacity-90 active:scale-95 transition flex-shrink-0"
+                      >
+                        Post
+                      </button>
+                    </div>
+                    <label className="flex items-center gap-2 mt-2.5 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={isAnonymous}
+                        onChange={e => setIsAnonymous(e.target.checked)}
+                        className="rounded accent-sage"
+                      />
+                      <span className="text-xs text-gray-500">Post anonymously</span>
+                    </label>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+
+        <div className="h-2" />
       </div>
     </div>
   );
